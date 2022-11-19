@@ -4,3 +4,16 @@ Markowitz is the father of modern portfolio theory. Markowitz formulated the por
 One of the important contributions of the fourth industrial revolution is the introduction of robo advisors as alternates to conventional mutual funds. Robo advisors are mechanized platforms that use automated algorithms to provide financial advice to investors. (Tao et al., 2021b) 
 This study concentrated on building a Robo Advisor based on Modern Portfolio Theory – Mean Variance Theory by Markowitz to see the return diversification when an investor with different risk profiles and preferences uses the built Robo Advisor for different groups of stocks based in different types of markets such as technology, health, consumer, finance and Portuguese. 
 
+# Empirical Work
+
+The main goal of the project is to understand how Robo Advisors output differentiates for different investor profiles defined by parameters of maximum drawdown and risk profile of investor while calculating possible outcomes such as weights of the predefined assets and investor performance between the years 2012 to 2022. 
+
+# Data Collection
+All historical data is downloaded with the tool of Yahoo Finance Library created for Python users.
+Data Preparation 
+Downloaded data is being stored on the users’ computer to being used later for calculations. The data file type is Comma Separated Values (.csv). Yahoo Finance provides daily historical price data starting from 2012 to 2022 without any missing values if the selected stock has been operated in the selected market between these years. 
+
+## Exploring Data
+To understand different outcomes for different sectors as mentioned before selected stocks are decided by mainly top volumed stocks of relevant markets with low volatility. 
+
+![image](https://user-images.githubusercontent.com/20598749/202874600-f98136fc-7905-4f44-8714-746b4f7c6bad.png)
