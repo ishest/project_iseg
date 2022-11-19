@@ -29,7 +29,7 @@ st.text('The information on the website is not a financial advice. It is only \n
 if st.checkbox('I agree'):
         st.write('Welcome to our service')
 else:
-        st.write('Please, confirm that you are agree')
+        st.write('Please, confirm that you agree')
 
 selected_sector = st.selectbox(label="Choose your stocks", options=industries)
 
