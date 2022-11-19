@@ -92,50 +92,6 @@ def gmv(cov):
     return msr(0, np.repeat(1, n), cov)
 
 
-def plot_ef(n_points, er, cov, show_cml=False, riskfree_rate=0, style='.-', show_ew=False, show_gmv=False):
-    weights = optimal_weights(n_points, er, cov)
-    # print(weights)
-    rets = [portfolio_return(w, er) for w in weights]
-    vols = [portfolio_vol(w, cov) for w in weights]
-    ef = pd.DataFrame({
-        "Returns": rets,
-        "Volatility": vols
-    })
-    ax = ef.plot.line(x="Volatility", y="Returns", style=style, linewidth=1, figsize=(10, 5))
-    if show_ew:
-        n = er.shape[0]
-        w_ew = np.repeat(1 / n, n)
-        # print('Weights in EW', w_ew)
-        r_ew = portfolio_return(w_ew, er)
-        vol_ew = portfolio_vol(w_ew, cov)
-        # display EW
-        ax.plot([vol_ew], [r_ew], color='goldenrod', marker='o', markersize=10, label='Equally Weighted')
-
-    if show_gmv:
-        w_gmv = gmv(cov)
-        # print('Weights in GMV', list(w_gmv))
-        r_gmv = portfolio_return(w_gmv, er)
-        vol_gmv = portfolio_vol(w_gmv, cov)
-        # display GMV
-        ax.plot([vol_gmv], [r_gmv], color='midnightblue', marker='o', markersize=10, label='Global Minimum Vol')
-
-    if show_cml:
-        ax.set_xlim(left=0)
-        w_msr = msr(riskfree_rate, er, cov)
-        # print('Weights in MSR', w_msr)
-        r_msr = portfolio_return(w_msr, er)
-        vol_msr = portfolio_vol(w_msr, cov)
-        # Add CML Capital Market Line
-        cml_x = [0, vol_msr]
-        cml_y = [riskfree_rate, r_msr]
-        ax.plot(cml_x, cml_y, color='green', marker='o', linestyle='dashed', markersize=12, linewidth=2,
-                label='Capital Market Line');
-
-    plt.legend()
-
-    return ax
-
-
 # Descriptive formulas
 
 def drawdown(return_series: pd.Series):
@@ -209,9 +165,9 @@ def cvar_historic(r, level=5):
 
 
 def summary_stats(r, riskfree_rate=0.0):
-    ann_r = r.aggregate(annualize_rets, periods_per_year=12)
-    ann_vol = r.aggregate(annualize_vol, periods_per_year=12)
-    ann_sr = r.aggregate(sharpe_ratio, riskfree_rate=riskfree_rate, periods_per_year=12)
+    ann_r = r.aggregate(annualize_rets, periods_per_year=252)
+    ann_vol = r.aggregate(annualize_vol, periods_per_year=252)
+    ann_sr = r.aggregate(sharpe_ratio, riskfree_rate=riskfree_rate, periods_per_year=252)
     dd = r.aggregate(lambda r: drawdown(r).Drawdown.min())
     skew = r.aggregate(skewness)
     kurt = r.aggregate(kurtosis)
@@ -292,19 +248,38 @@ def port(Max_DD, Risk_level, gmv_portfolio):
     dd_25 = drawdown(rets_maxdd25[0])
 
     fig, ax = plt.subplots()
+
     ax = dd_25["Wealth"].plot(figsize=(10, 5), title='Investor Performance',
                               label='MaxDD: {}%\nRisk Profile: {}'.format(round(Max_DD * 100, 0), Risk_level),
                               color="cornflowerblue", legend=True, linewidth=1)
 
-    # dd_25["Peaks"].plot(ax=ax, color="red", ls=":", linewidth=1);
+
+    dd_25["Peaks"].plot(ax=ax, color="red", ls=":", linewidth=1)
 
     st.pyplot(fig)
     # st.pyplot(dd_25)
 
-    stats = pd.DataFrame(summary_stats(rets_maxdd25))
+    stats = pd.DataFrame(summary_stats(rets_maxdd25)).style.hide_index()
     #     print('\n', pd.DataFrame(pkt.summary_stats(rets_maxdd25)).T)
 
-    st.dataframe(stats)
-    # display(stats)
+    st.subheader('Portfolio statistics')
+
+    hide_dataframe_row_index = """
+                <style>
+                .row_heading.level0 {display:none}
+                .blank {display:none}
+                </style>
+                """
+
+    # Inject CSS with Markdown
+    st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
+
+    st.table(stats.format({'Annualized Return': '{:.2%}',
+                           'Annualized Vol': '{:.2%}',
+                           'Cornish-Fisher VaR (5%)':'{:.2%}',
+                           'Historic CVaR (5%)':'{:.2%}',
+                           'Max Drawdown':'{:.2%}'}))
+
+
 
 
