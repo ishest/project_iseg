@@ -19,3 +19,4 @@ To understand different outcomes for different sectors as mentioned before selec
 ![image](https://user-images.githubusercontent.com/20598749/202874600-f98136fc-7905-4f44-8714-746b4f7c6bad.png)
 
 <img width="233" alt="image" src="https://user-images.githubusercontent.com/20598749/202874634-a390c4ae-4f2b-4361-9b96-43bffc341dde.png">
+<img width="232" alt="image" src="https://user-images.githubusercontent.com/20598749/202874650-a7fbc5d3-12d4-4e39-9607-f246c8f1c5d0.png">
