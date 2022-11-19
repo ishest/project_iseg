@@ -17,3 +17,5 @@ Downloaded data is being stored on the users’ computer to being used later for
 To understand different outcomes for different sectors as mentioned before selected stocks are decided by mainly top volumed stocks of relevant markets with low volatility. 
 
 ![image](https://user-images.githubusercontent.com/20598749/202874600-f98136fc-7905-4f44-8714-746b4f7c6bad.png)
+
+<img width="233" alt="image" src="https://user-images.githubusercontent.com/20598749/202874634-a390c4ae-4f2b-4361-9b96-43bffc341dde.png">
