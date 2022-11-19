@@ -14,7 +14,7 @@ portugal_list = ['EDPR.LS', 'NOS.LS', 'JMT.LS', 'SON.LS', 'ALTR.LS', 'NVG.LS', '
 financial_list = ['V', 'JPM', 'C', 'MA', 'GS', 'SCHW', 'BAC', 'MS', 'WFC']
 
 list_industries = [tech_list, health_list, consumer_list, portugal_list, financial_list]
-name_inds = ['Tech', 'Health', 'Consumers', 'Portugal', 'Finance']
+name_inds = ['Tech', 'Health', 'Consumers', 'Portuguese', 'Finance']
 
 start_date = time.strftime("2018-11-01")
 
@@ -23,6 +23,4 @@ def update():
     for i in range(len(name_inds)):
         data = pd.DataFrame(columns=list_industries[i])
         data = yf.download(list_industries[i], start='2018-01-01')['Adj Close']
-        data.to_csv(str(name_inds[i])+'.csv')
-
-update()
+        data.to_csv('data/'+str(name_inds[i])+'.csv')
