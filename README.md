@@ -30,13 +30,15 @@ The volatility or risk was derived from the standard deviation of the prices. Th
 The return of a financial security is the rate computed based on what an investment generates during a certain period of time, where we include the capital gains/losses and the cash-flows it may generate (dividends, in the case of stocks). We can calculate the returns as the difference between an asset price at the end and in the beginning of a selected period, divided by the price of the asset at the beginning of the selected period, 
 <br> $R_it=  (P_it-P_(it-1),)/P_it$<br> 
 where Rit is the return of asset i on moment t; Pit is the asset i price on moment t; and $Pit − 1$ is the asset i price on moment t-1. 
-<br> If t represents a week time interval, weekly returns data are obtained. In addition, the arithmetic mean of the return of the period is calculated as <br> $R_it=(∑_(t=1)^T▒R_it )/T $<br> ,
+<br> If t represents a week time interval, weekly returns data are obtained. In addition, the arithmetic mean of the return of the period is calculated as <br> $R_it=(∑_(t=1)^T*(R_it )/T $<br> ,
 where T is the number of observations.
 <br> 
 Markowitz (1952, 1959) introduced the concept of risk and assumed that risk is measured by the variance (or by the standard deviation from the average return), given by 
-<br> $σ_i^2=(∑_(t=1)^T▒〖〖(R〗_it-R_i)〗^2 )/(T-1)$ <br> 
+<br> $σ_i^2=(∑_(t=1)^T*〖〖(R〗_it-R_i)〗^2 )/(T-1)$ <br> 
 
 Covariance enhances the influence of an asset on other assets, with different characteristics, in the determination of the variance of a portfolio. It measures how returns on assets move together. In this context, the correlation is a simple measure to standardize covariance, scaling it with a range of −1 to +1. The covariance concept (Markowitz 1952) puts in evidence the importance of diversification in the choice of the optimal portfolio.
 In order to avoid complete liquidation of the portfolio, we implemented maximum withdraw selection of the user over the course of portfolio with maximum value of 70% and created 5 different risk profiles to evaluate 5 different approaches over weightages of stocks and returns.
-Deployment The project can be found as an application over the following web-page: https://robo- iseg.streamlit.app/. Users must agree with terms and conditions and acknowledge that this project is not built for serving any kind of financial advice and it is only for the information and learning purposes. Then the stock group, maximum drawdown limit and risk profile should be selected to obtain efficient frontier graph, weightage of portfolio, back test of the optimal portfolio and statistics such as Annualized Return, Annualized Volatility, Skewness Index, Kurtosis Index, Cornish Fisher VaR, Historic cVaR, Sharpe Ratio and Maximum Drawdown. These statistics integrated to the project with separate functions. 
+Deployment The project can be found as an application over the following web-page:
+<br> https://robo-iseg.streamlit.app/<br> 
+Users must agree with terms and conditions and acknowledge that this project is not built for serving any kind of financial advice and it is only for the information and learning purposes. Then the stock group, maximum drawdown limit and risk profile should be selected to obtain efficient frontier graph, weightage of portfolio, back test of the optimal portfolio and statistics such as Annualized Return, Annualized Volatility, Skewness Index, Kurtosis Index, Cornish Fisher VaR, Historic cVaR, Sharpe Ratio and Maximum Drawdown. These statistics integrated to the project with separate functions. 
 
