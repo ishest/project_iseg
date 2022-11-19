@@ -96,7 +96,7 @@ if st.button('Build a portfolio'):
 
         # table of weights
 
-        st.header(f'Percent of the invested capital that should be allocated into each asset')
+        st.header(f'Share of the invested capital that should be allocated into each asset')
 
         weights = list(fc.gmv(cov))
         gmv_portfolio = np.multiply(data_pct, weights).sum(axis=1)
