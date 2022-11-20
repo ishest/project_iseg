@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 
 import matplotlib.pyplot as plt
-plt.style.use('fivethirtyeight')
+plt.style.use("dark_background")
+
+# plt.style.use('fivethirtyeight')
 
 # import scipy
 import math
@@ -13,42 +15,41 @@ from scipy.optimize import minimize
 import streamlit as st
 import yfinance as yf
 
-def annualize_rets(r, periods_per_year):
+def annual_returns(i, periods):
+    compound_growth = (1+i).prod()
+    num_periods = i.shape[0]
+    return compound_growth**(periods/num_periods)-1
 
-    compounded_growth = (1+r).prod()
-    n_periods = r.shape[0]
-    return compounded_growth**(periods_per_year/n_periods)-1
-
-def annualize_vol(r, periods_per_year):
-    return r.std()*(periods_per_year**0.5)
+def annual_volatility(i, periods):
+    return i.std()*(periods**0.5)
 
 
-def portfolio_return(weights, returns):
+def port_return(weights, returns):
     return weights.T.dot(returns)
 
 
-def portfolio_vol(weights, covmat):
-    return np.dot(weights.T.dot(covmat), weights) ** 0.5
+def port_volatility(weights, cov):
+    return np.dot(weights.T.dot(cov), weights) ** 0.5
 
 
-def minimize_vol(target_return, er, cov):
-    n = er.shape[0]
+def minimize_volatility(target_return, exp_ret, cov):
+    n = exp_ret.shape[0]
     init_guess = np.repeat(1 / n, n)
     bounds = ((0.0, 1.0),) * n
-    return_is_target = {  # return that we expect and it is constrain to our function
+    return_is_target = {
         'type': 'eq',
-        'args': (er,),
-        'fun': lambda weights, er: target_return - portfolio_return(weights, er)
+        'args': (exp_ret,),
+        'fun': lambda weights, exp_ret: target_return - port_return(weights, exp_ret)
     }
 
-    # weights can't exceed 100%
+    # weights are less than 100%
 
     weights_sum_to_1 = {
         'type': 'eq',
         'fun': lambda weights: np.sum(weights) - 1
     }
 
-    results = minimize(portfolio_vol, init_guess,
+    results = minimize(port_volatility, init_guess,
                        args=(cov,), method='SLSQP',
                        options={'disp': False},
                        constraints=(return_is_target, weights_sum_to_1),
@@ -57,29 +58,29 @@ def minimize_vol(target_return, er, cov):
     return results.x
 
 
-def optimal_weights(n_points, er, cov):
-    target_rs = np.linspace(er.min(), er.max(), n_points)
-    weights = [minimize_vol(target_return, er, cov) for target_return in target_rs]
+def optimal_weights(num_points, exp_ret, cov):
+    target_rs = np.linspace(exp_ret.min(), exp_ret.max(), num_points)
+    weights = [minimize_volatility(target_return, exp_ret, cov) for target_return in target_rs]
     return weights
 
 
 # Max Sharpe Ratio
-def msr(riskfree_rate, er, cov):
-    n = er.shape[0]
+def msr(riskfree_rate, exp_ret, cov):
+    n = exp_ret.shape[0]
     init_guess = np.repeat(1 / n, n)
-    bounds = ((0.0, 1.0),) * n  # an N-tuple of 2-tuples!
-    # construct the constraints
+    bounds = ((0.0, 1.0),) * n
+
     weights_sum_to_1 = {'type': 'eq',
                         'fun': lambda weights: np.sum(weights) - 1
                         }
 
-    def neg_sharpe(weights, riskfree_rate, er, cov):
-        r = portfolio_return(weights, er)
-        vol = portfolio_vol(weights, cov)
+    def neg_sharpe(weights, riskfree_rate, exp_ret, cov):
+        r = port_return(weights, exp_ret)
+        vol = port_volatility(weights, cov)
         return -(r - riskfree_rate) / vol
 
     results = minimize(neg_sharpe, init_guess,
-                       args=(riskfree_rate, er, cov), method='SLSQP',
+                       args=(riskfree_rate, exp_ret, cov), method='SLSQP',
                        options={'disp': False},
                        constraints=(weights_sum_to_1,),
                        bounds=bounds)
@@ -92,7 +93,7 @@ def gmv(cov):
     return msr(0, np.repeat(1, n), cov)
 
 
-# Descriptive formulas
+# Portfolio statistics
 
 def drawdown(return_series: pd.Series):
     wealth_index = 1000 * (1 + return_series).cumprod()
@@ -109,8 +110,8 @@ def sharpe_ratio(r, riskfree_rate, periods_per_year):
     # convert the annual riskfree rate to per period
     rf_per_period = (1 + riskfree_rate) ** (1 / periods_per_year) - 1
     excess_ret = r - rf_per_period
-    ann_ex_ret = annualize_rets(excess_ret, periods_per_year)
-    ann_vol = annualize_vol(r, periods_per_year)
+    ann_ex_ret = annual_returns(excess_ret, periods_per_year)
+    ann_vol = annual_volatility(r, periods_per_year)
     return ann_ex_ret / ann_vol
 
 
@@ -165,8 +166,8 @@ def cvar_historic(r, level=5):
 
 
 def summary_stats(r, riskfree_rate=0.0):
-    ann_r = r.aggregate(annualize_rets, periods_per_year=252)
-    ann_vol = r.aggregate(annualize_vol, periods_per_year=252)
+    ann_r = r.aggregate(annual_returns, periods=252)
+    ann_vol = r.aggregate(annual_volatility, periods=252)
     ann_sr = r.aggregate(sharpe_ratio, riskfree_rate=riskfree_rate, periods_per_year=252)
     dd = r.aggregate(lambda r: drawdown(r).Drawdown.min())
     skew = r.aggregate(skewness)
@@ -206,7 +207,7 @@ def drawdown_allocator(risky_part, free_risk, maxdd, m=3):
     return w_history
 
 
-def bt_mix(r1, r2, allocator, **kwargs):
+def backtest_two_assets(r1, r2, allocator, **kwargs):
     """
     Runs a back test
     """
@@ -243,24 +244,34 @@ def port(Max_DD, Risk_level, gmv_portfolio):
     monthly_cashreturn = (1 + cashrate) ** (1 / 12) - 1
     rets_cash = pd.DataFrame(data=monthly_cashreturn, index=gmv_portfolio.index, columns=[0])  # 1 column dataframe
 
-    rets_maxdd25 = bt_mix(pd.DataFrame(gmv_portfolio), rets_cash, allocator=drawdown_allocator, maxdd=Max_DD,
+    rets_maxdd = backtest_two_assets(pd.DataFrame(gmv_portfolio), rets_cash, allocator=drawdown_allocator, maxdd=Max_DD,
                           m=Risk_level)
-    dd_25 = drawdown(rets_maxdd25[0])
+    dd_ = drawdown(rets_maxdd[0])
 
     fig, ax = plt.subplots()
+    for param in ['text.color', 'axes.labelcolor', 'xtick.color', 'ytick.color']:
+        plt.rcParams[param] = '0.9'  # very light grey
+    for param in ['figure.facecolor', 'axes.facecolor', 'savefig.facecolor']:
+        plt.rcParams[param] = '#212946'  # bluish dark grey
+    colors = [
+        '#08F7FE',  # teal/cyan
+        '#FE53BB',  # pink
+        '#F5D300',  # yellow
+        '#00ff41',  # matrix green
+    ]
 
-    ax = dd_25["Wealth"].plot(figsize=(10, 5), title='Investor Performance',
+    ax = dd_["Wealth"].plot(figsize=(10, 5), title='Investor Performance',
                               label='MaxDD: {}%\nRisk Profile: {}'.format(round(Max_DD * 100, 0), Risk_level),
-                              color="cornflowerblue", legend=True, linewidth=1)
+                              color=colors, legend=True, linewidth=1)
+    ax.grid(color='#2A3459')
 
-
-    dd_25["Peaks"].plot(ax=ax, color="red", ls=":", linewidth=1)
+    # "cornflowerblue"
+    dd_["Peaks"].plot(ax=ax, color=colors, ls=":", linewidth=1)
 
     st.pyplot(fig)
-    # st.pyplot(dd_25)
 
-    stats = pd.DataFrame(summary_stats(rets_maxdd25)).style.hide_index()
-    #     print('\n', pd.DataFrame(pkt.summary_stats(rets_maxdd25)).T)
+    stats = pd.DataFrame(summary_stats(rets_maxdd)).style.hide_index()
+    #     print('\n', pd.DataFrame(pkt.summary_stats(rets_maxdd)).T)
 
     st.subheader('Portfolio statistics')
 
