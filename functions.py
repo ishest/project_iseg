@@ -179,8 +179,8 @@ def summary_stats(r, riskfree_rate=0.0):
         "Annualized Vol": ann_vol,
         "Skewness": skew,
         "Kurtosis": kurt,
-        "Cornish-Fisher VaR (5%)": cf_var5,
-        "Historic CVaR (5%)": hist_cvar5,
+        "VaR (5%)": cf_var5,
+        "Expected Shortfall (5%)": hist_cvar5,
         "Sharpe Ratio": ann_sr,
         "Max Drawdown": dd
     })
@@ -287,8 +287,8 @@ def port(Max_DD, Risk_level, gmv_portfolio):
 
     st.table(stats.format({'Annualized Return': '{:.2%}',
                            'Annualized Vol': '{:.2%}',
-                           'Cornish-Fisher VaR (5%)':'{:.2%}',
-                           'Historic CVaR (5%)':'{:.2%}',
+                           'VaR (5%)':'{:.2%}',
+                           'Expected Shortfall (5%)':'{:.2%}',
                            'Max Drawdown':'{:.2%}'}))
 
 
