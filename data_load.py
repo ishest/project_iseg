@@ -3,13 +3,13 @@ import yfinance as yf
 import time
 
 
-tech_list = ['AAPL', 'ADBE', 'AMD', 'NVDA', 'IBM', 'CSCO', 'CTSH', 'CTXS', 'HPQ']
+tech_list = ['AAPL', 'ADBE', 'AMD', 'NVDA', 'IBM', 'CSCO', 'CTSH', 'CTXS', 'HPQ','DIS']
 
-health_list = ['UNH', 'JNJ', 'LLY', 'PFE', 'ABBV', 'MRK', 'NVS', 'DHR']
+health_list = ['UNH', 'JNJ', 'LLY', 'PFE', 'ABBV', 'MRK', 'NVS', 'DHR','BIIB']
 
 consumer_list = ['WMT', 'PG', 'KO', 'PEP', 'COST', 'PM', 'UL']
 
-portugal_list = ['EDPR.LS', 'NOS.LS', 'JMT.LS', 'SON.LS', 'ALTR.LS', 'NVG.LS', 'SEM.LS', 'GALP.LS']
+portugal_list = ['EDPR.LS', 'NOS.LS', 'JMT.LS', 'SON.LS', 'ALTR.LS', 'NVG.LS', 'SEM.LS', 'GALP.LS','SLBEN.LS','COR.LS']
 
 financial_list = ['V', 'JPM', 'C', 'MA', 'GS', 'SCHW', 'BAC', 'MS', 'WFC']
 
