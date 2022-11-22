@@ -12,7 +12,7 @@ plt.style.use("dark_background")
 industries =['Tech', 'Health', 'Consumers', 'Portuguese', 'Finance']
 
 st.title('Robo Advisor based on Modern Portfolio Theory')
-st.subheader('created by Maxwell, Rafael, Tansu, and Igor')
+st.subheader('created by Igor, Maxwell, Tansu and Rafael')
 
 expander_bar = st.expander("About the project")
 expander_bar.markdown("""
@@ -23,9 +23,9 @@ expander_bar.markdown("""
 """)
 
 st.image('robo_img.jpeg')
-st.text('The information on the website is not a financial advice. It is only \n'
-        'for the information and learning purposes. \n'
-        'Please, agree with these terms and conditions')
+st.text('The information on the website is not financial advice. It is only \n'
+        'for learning and educational purposes. \n'
+        'Please, agree with these terms and conditions.')
 
 
 if st.checkbox('I agree'):
