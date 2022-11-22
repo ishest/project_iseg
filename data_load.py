@@ -3,7 +3,7 @@ import yfinance as yf
 import time
 
 
-tech_list = ['AAPL', 'ADBE', 'AMD', 'NVDA', 'IBM', 'CSCO', 'CTSH', 'CTXS', 'HPQ']
+tech_list = ['AAPL', 'ADBE', 'AMD', 'NVDA', 'IBM', 'CSCO', 'CTSH', 'CTXS', 'HPQ', 'COIN']
 
 health_list = ['UNH', 'JNJ', 'LLY', 'PFE', 'ABBV', 'MRK', 'NVS', 'DHR']
 
